@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - Єиɢ: 𝑴𝒐𝒉𝒎𝒎𝒆𝒅 𝒂𝒍𝒔𝒍𝒂𝒍</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #111;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* خلفية النقاط المتحركة والأكواد */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* شاشة الافتتاحية الفخمة (أبيض وأسود) */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: curtainUp 1s ease 2.8s forwards;
+        }
+
+        .intro-content {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: revealName 1.5s ease 0.3s forwards;
+        }
+
+        .intro-title {
+            font-size: clamp(1.8rem, 4vw, 3rem); /* متجاوب مع حجم الشاشة */
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .intro-title::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            margin: 10px auto 0;
+            animation: lineExpand 1s ease 1s forwards;
+        }
+
+        @keyframes revealName {
+            0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes lineExpand {
+            to { width: 100%; }
+        }
+
+        @keyframes curtainUp {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* تصميم كارد تسجيل الدخول المتجاوب */
+        .card {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 14px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: showCard 0.8s ease 2.9s forwards;
+        }
+
+        @keyframes showCard {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card h2 {
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            text-align: center;
+            color: #111;
+            border-bottom: 2px solid #111;
+            padding-bottom: 12px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 13px 15px;
+            background: #fff;
+            border: 1px solid #ccc;
+            color: #111;
+            border-radius: 6px;
+            outline: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #111;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 13px;
+            background: #111;
+            border: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.1s;
+            margin-top: 10px;
+        }
+
+        .btn:hover { background: #333; }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-google {
+            background: #fff;
+            color: #111;
+            border: 1px solid #ccc;
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-google:hover { background: #f2f2f2; border-color: #999; }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .links span {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .links span:hover {
+            color: #111;
+            text-decoration: underline;
+        }
+
+        .divider {
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+            color: #888;
+            font-size: 0.8rem;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 42%;
+            height: 1px;
+            background: #ddd;
+        }
+        .divider::before { right: 0; }
+        .divider::after { left: 0; }
+
+        /* تحسينات للشاشات الصغيرة جداً (الهواتف الضيقة) */
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 20px;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- خلفية النقاط والأكواد المتحركة -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- شاشة الافتتاحية السوداء والاسم بـ تأثير راقي -->
+    <div id="intro-screen">
+        <div class="intro-content">
+            <div class="intro-title">Єиɢ: 𝑴𝒐𝒉𝒎𝒎𝒆𝒅 𝒂𝒍𝒔𝒍𝒂𝒍</div>
+        </div>
+    </div>
+
+    <!-- كارد تسجيل الدخول الفاخر -->
+    <div class="card">
+        <h2 id="form-title">تسجيل الدخول</h2>
+        
+        <div class="input-group">
+            <label>البريد الإلكتروني</label>
+            <input type="email" id="email" placeholder="example@domain.com">
+        </div>
+        
+        <div class="input-group">
+            <label>كلمة المرور</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+        
+        <button class="btn" id="submit-btn" onclick="handleAuth()">تسجيل الدخول</button>
+        
+        <div class="links">
+            <span onclick="toggleMode()" id="toggle-text">إنشاء حساب جديد؟</span>
+            <span onclick="forgotPassword()">نسيت كلمة السر؟</span>
+        </div>
+
+        <div class="divider">أو</div>
+
+        <button class="btn btn-google" onclick="googleSignIn()">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#111" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.1 8.9 5 12 5zm5.7 8.3c0-.4-.1-.8-.1-1.3H12v2.5h3.2c-.2 1-.8 1.9-1.7 2.5l2.7 2.1c1.6-1.5 2.7-3.7 2.7-6.3zM5.3 10.3C5.1 10.9 5 11.4 5 12s.1 1.1.3 1.7L1.6 16.6C1 15.3 0 13.7 0 12s1-3.3 1.6-4.6l3.7 2.9zM12 19c-3.1 0-5.8-2.1-6.7-5.3L1.6 16c1.9 3.8 5.8 6.4 10.4 6.4 2.5 0 4.8-.8 6.6-2.2l-3-2.3c-.9.6-2 1-3.6 1z"/></svg>
+            المتابعة بواسطة Google
+        </button>
+    </div>
+
+    <script>
+        // سكربت خلفية النقاط السوداء المتحركة وتفاعل الماوس والأكواد
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // إعداد النقاط
+        const particlesCount = window.innerWidth < 768 ? 40 : 80; // عدد أقل في الجوال لتحسين الأداء
+        const particles = [];
+
+        for (let i = 0; i < particlesCount; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 1,
+                vy: (Math.random() - 0.5) * 1,
+                radius: Math.random() * 2 + 1.5
+            });
+        }
+
+        // تفاعل الماوس
+        let mouse = { x: null, y: null };
+        window.addEventListener('mousemove', e => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        function animateBackground() {
+            ctx.clearRect(0, 0, width, height);
+
+            // رسم خفيف جداً لأكواد برمجية في الخلفية
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
+            ctx.font = '12px monospace';
+            ctx.fillText("function auth() { return true; }", 50, 100);
+            ctx.fillText("git push origin main", width - 200, height - 80);
+            ctx.fillText("API connect JSON...", width / 2 - 50, 50);
+
+            // تحديث ورسم النقاط وخطوط التوصيل
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > width) p.vx *= -1;
+                if (p.y < 0 || p.y > height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                ctx.fill();
+
+                // التوصيل بين النقاط القريبة
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(0, 0, 0, ${0.12 * (1 - dist / 120)})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.stroke();
+                    }
+                }
+
+                // ربط النقاط بمؤشر الماوس
+                if (mouse.x !== null && mouse.y !== null) {
+                    let distMouse = Math.hypot(p.x - mouse.x, p.y - mouse.y);
+                    if (distMouse < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.strokeStyle = `rgba(0, 0, 0, ${0.2 * (1 - distMouse / 150)})`;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animateBackground);
+        }
+        animateBackground();
+
+        // إعدادات GitHub API (استبدل القيم بمعلومات حسابك ومستودعك الحقيقي)
+        const GITHUB_TOKEN = "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";
+        const REPO_OWNER = "YOUR_GITHUB_USERNAME"; 
+        const REPO_NAME = "YOUR_REPO_NAME";       
+        const FILE_PATH = "users.json";
+
+        let isSignup = false;
+
+        function toggleMode() {
+            isSignup = !isSignup;
+            const title = document.getElementById('form-title');
+            const submitBtn = document.getElementById('submit-btn');
+            const toggleText = document.getElementById('toggle-text');
+
+            if (isSignup) {
+                title.innerText = 'إنشاء حساب جديد';
+                submitBtn.innerText = 'إنشاء الحساب';
+                toggleText.innerText = 'لديك حساب بالفعل؟ تسجيل الدخول';
+            } else {
+                title.innerText = 'تسجيل الدخول';
+                submitBtn.innerText = 'تسجيل الدخول';
+                toggleText.innerText = 'إنشاء حساب جديد؟';
+            }
+        }
+
+        function forgotPassword() {
+            const email = prompt("أدخل بريدك الإلكتروني لاستعادة كلمة المرور:");
+            if (email) {
+                alert("تم إرسال رابط استعادة كلمة المرور إلى: " + email);
+            }
+        }
+
+        function googleSignIn() {
+            alert("خاصية تسجيل الدخول عبر Google تتطلب ربط Google OAuth Client ID.");
+        }
+
+        async function handleAuth() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                alert("الرجاء ملء كافة الحقول المطلوبة!");
+                return;
+            }
+
+            if (isSignup) {
+                await registerUser(email, password);
+            } else {
+                await loginUser(email, password);
+            }
+        }
+
+        // دالة حفظ المستخدم الجديد في ملف JSON على GitHub
+        async function registerUser(email, password) {
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: { "Authorization": `token ${GITHUB_TOKEN}` }
+                });
+                
+                let users = [];
+                let sha = "";
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    sha = data.sha;
+                    users = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                }
+
+                if (users.some(u => u.email === email)) {
+                    alert("هذا البريد مسجل مسبقاً!");
+                    return;
+                }
+
+                users.push({ email, password, createdAt: new Date().toISOString() });
+
+                const encodedContent = btoa(unescape(encodeURIComponent(JSON.stringify(users, null, 2))));
+                
+                const updateResponse = await fetch(url, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `token ${GITHUB_TOKEN}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: `Add new user: ${email}`,
+                        content: encodedContent,
+                        sha: sha
+                    })
+                });
+
+                if (updateResponse.ok) {
+                    alert("تم إنشاء الحساب بنجاح وتم تحديث ملف الـ JSON!");
+                    toggleMode();
+                } else {
+                    alert("فشل الحفظ، تأكد من كتابة اسم المستخدم والمستودع بشكل صحيح في السكربت.");
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("حدث خطأ أثناء الاتصال بالخادم.");
+            }
+        }
+
+        // دالة تسجيل الدخول والتحقق من البيانات عبر ملف JSON
+        async function loginUser(email, password) {
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: { "Authorization": `token ${GITHUB_TOKEN}` }
+                });
+                
+                if (!response.ok) {
+                    alert("ملف البيانات غير موجود أو فارغ في المستودع.");
+                    return;
+                }
+
+                const data = await response.json();
+                const users = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+
+                const user = users.find(u => u.email === email && u.password === password);
+
+                if (user) {
+                    alert("مرحباً بك مجدداً، تم تسجيل الدخول بنجاح!");
+                } else {
+                    alert("البريد الإلكتروني أو كلمة المرور غير صحيحة!");
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("فشل التحقق من البيانات.");
+            }
+        }
+    </script>
+</body>
+</html>
