@@ -56,7 +56,7 @@
         }
 
         .intro-title {
-            font-size: clamp(1.8rem, 4vw, 3rem); /* متجاوب مع حجم الشاشة */
+            font-size: clamp(1.8rem, 4vw, 3rem);
             font-weight: 800;
             color: #fff;
             letter-spacing: 2px;
@@ -212,7 +212,6 @@
         .divider::before { right: 0; }
         .divider::after { left: 0; }
 
-        /* تحسينات للشاشات الصغيرة جداً (الهواتف الضيقة) */
         @media (max-width: 480px) {
             .card {
                 padding: 30px 20px;
@@ -263,7 +262,7 @@
     </div>
 
     <script>
-        // سكربت خلفية النقاط السوداء المتحركة وتفاعل الماوس والأكواد
+        // الخلفية المتحركة (نقاط تفاعلية وأكواد)
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -275,8 +274,7 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // إعداد النقاط
-        const particlesCount = window.innerWidth < 768 ? 40 : 80; // عدد أقل في الجوال لتحسين الأداء
+        const particlesCount = window.innerWidth < 768 ? 40 : 80;
         const particles = [];
 
         for (let i = 0; i < particlesCount; i++) {
@@ -289,7 +287,6 @@
             });
         }
 
-        // تفاعل الماوس
         let mouse = { x: null, y: null };
         window.addEventListener('mousemove', e => {
             mouse.x = e.clientX;
@@ -303,14 +300,12 @@
         function animateBackground() {
             ctx.clearRect(0, 0, width, height);
 
-            // رسم خفيف جداً لأكواد برمجية في الخلفية
             ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
             ctx.font = '12px monospace';
             ctx.fillText("function auth() { return true; }", 50, 100);
             ctx.fillText("git push origin main", width - 200, height - 80);
             ctx.fillText("API connect JSON...", width / 2 - 50, 50);
 
-            // تحديث ورسم النقاط وخطوط التوصيل
             for (let i = 0; i < particles.length; i++) {
                 let p = particles[i];
                 p.x += p.vx;
@@ -324,7 +319,6 @@
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
                 ctx.fill();
 
-                // التوصيل بين النقاط القريبة
                 for (let j = i + 1; j < particles.length; j++) {
                     let p2 = particles[j];
                     let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
@@ -338,7 +332,6 @@
                     }
                 }
 
-                // ربط النقاط بمؤشر الماوس
                 if (mouse.x !== null && mouse.y !== null) {
                     let distMouse = Math.hypot(p.x - mouse.x, p.y - mouse.y);
                     if (distMouse < 150) {
@@ -355,10 +348,10 @@
         }
         animateBackground();
 
-        // إعدادات GitHub API (استبدل القيم بمعلومات حسابك ومستودعك الحقيقي)
+        // إعدادات GitHub API (محددة باسم حسابك ومستودعك)
         const GITHUB_TOKEN = "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";
-        const REPO_OWNER = "YOUR_GITHUB_USERNAME"; 
-        const REPO_NAME = "YOUR_REPO_NAME";       
+        const REPO_OWNER = "mohmmed-alslal"; 
+        const REPO_NAME = "mod2";       
         const FILE_PATH = "users.json";
 
         let isSignup = false;
@@ -407,7 +400,6 @@
             }
         }
 
-        // دالة حفظ المستخدم الجديد في ملف JSON على GitHub
         async function registerUser(email, password) {
             const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
             
@@ -451,7 +443,7 @@
                     alert("تم إنشاء الحساب بنجاح وتم تحديث ملف الـ JSON!");
                     toggleMode();
                 } else {
-                    alert("فشل الحفظ، تأكد من كتابة اسم المستخدم والمستودع بشكل صحيح في السكربت.");
+                    alert("فشل الحفظ، تحقق من صحة صلاحيات التوكن.");
                 }
 
             } catch (error) {
@@ -460,7 +452,6 @@
             }
         }
 
-        // دالة تسجيل الدخول والتحقق من البيانات عبر ملف JSON
         async function loginUser(email, password) {
             const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
             
