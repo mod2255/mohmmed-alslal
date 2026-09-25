@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+here<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -348,11 +348,8 @@
         }
         animateBackground();
 
-        // إعدادات GitHub API مع التوكن الجديد والمحدث
-        const GITHUB_TOKEN = "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";
-        const REPO_OWNER = "mohmmed-alslal"; 
-        const REPO_NAME = "mod2";       
-        const FILE_PATH = "users.json";
+        // رابط جلب ملف users.json مباشرة من مستودعك
+        const JSON_URL = "https://raw.githubusercontent.com/mohmmed-alslal/mod2/main/users.json";
 
         let isSignup = false;
 
@@ -384,6 +381,21 @@
             alert("خاصية تسجيل الدخول عبر Google تتطلب ربط Google OAuth Client ID.");
         }
 
+        async function getUsers() {
+            try {
+                const response = await fetch(JSON_URL + "?t=" + new Date().getTime()); // منع التخزين المؤقت
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (e) {
+                console.error("خطأ في جلب البيانات", e);
+            }
+            // جلب البيانات المخزنة محلياً كبديل احتياطي
+            return JSON.parse(localStorage.getItem('app_users')) || [
+                { email: "admin@example.com", password: "password123" }
+            ];
+        }
+
         async function handleAuth() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -393,92 +405,26 @@
                 return;
             }
 
+            let users = await getUsers();
+
             if (isSignup) {
-                await registerUser(email, password);
-            } else {
-                await loginUser(email, password);
-            }
-        }
-
-        async function registerUser(email, password) {
-            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
-            
-            try {
-                const response = await fetch(url, {
-                    headers: { "Authorization": `token ${GITHUB_TOKEN}` }
-                });
-                
-                let users = [];
-                let sha = "";
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    sha = data.sha;
-                    users = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-                }
-
                 if (users.some(u => u.email === email)) {
                     alert("هذا البريد مسجل مسبقاً!");
                     return;
                 }
 
                 users.push({ email, password, createdAt: new Date().toISOString() });
-
-                const encodedContent = btoa(unescape(encodeURIComponent(JSON.stringify(users, null, 2))));
+                localStorage.setItem('app_users', JSON.stringify(users));
                 
-                const updateResponse = await fetch(url, {
-                    method: "PUT",
-                    headers: {
-                        "Authorization": `token ${GITHUB_TOKEN}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        message: `Add new user: ${email}`,
-                        content: encodedContent,
-                        sha: sha
-                    })
-                });
-
-                if (updateResponse.ok) {
-                    alert("تم إنشاء الحساب بنجاح وتم تحديث ملف الـ JSON!");
-                    toggleMode();
-                } else {
-                    alert("فشل الحفظ، تحقق من صحة صلاحيات التوكن.");
-                }
-
-            } catch (error) {
-                console.error(error);
-                alert("حدث خطأ أثناء الاتصال بالخادم.");
-            }
-        }
-
-        async function loginUser(email, password) {
-            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
-            
-            try {
-                const response = await fetch(url, {
-                    headers: { "Authorization": `token ${GITHUB_TOKEN}` }
-                });
-                
-                if (!response.ok) {
-                    alert("ملف البيانات غير موجود أو فارغ في المستودع.");
-                    return;
-                }
-
-                const data = await response.json();
-                const users = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-
+                alert("تم إنشاء الحساب بنجاح وتسجيله محلياً!");
+                toggleMode();
+            } else {
                 const user = users.find(u => u.email === email && u.password === password);
-
                 if (user) {
                     alert("مرحباً بك مجدداً، تم تسجيل الدخول بنجاح!");
                 } else {
                     alert("البريد الإلكتروني أو كلمة المرور غير صحيحة!");
                 }
-
-            } catch (error) {
-                console.error(error);
-                alert("فشل التحقق من البيانات.");
             }
         }
     </script>
